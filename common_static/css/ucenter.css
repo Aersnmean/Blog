@@ -1,0 +1,103 @@
+.ucenter{
+    display: none;
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    padding: 5px;
+    text-align: center;
+    z-index: 100;
+    left: 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.ucenter_li{
+    height: 45%;
+    width: 100%;
+    line-height: 40px;
+    text-align: center;
+    list-style-type: none;
+}
+.ucenter_li a{
+    width: 135px;
+    height: 41px;
+    font-size: 16px;
+    padding: 5px;
+    margin: 0;
+    text-align: center;
+}
+.change_password{
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 41%;
+    width: 18%;
+    height: 42%;
+    background-color: rgba(0,0,0,0.66);
+    padding: 15px 5px;
+    text-align: center;
+    z-index: 102;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.change_password p{
+    text-align: left;
+    padding-left: 15px;
+    color: #b9b8b8;
+    font-size: 14px;
+    margin: 6px 0;
+    letter-spacing: 1px;
+}
+.change_password .tips{
+    margin-top: -20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #d24747;
+    letter-spacing: 0;
+}
+.password{
+    outline: none;
+    border: 1px solid black;
+    font-size: 14px;
+    color: #0e0e0e;
+    padding: 12px 10px;
+    width: 93%;
+    -webkit-appearance: none;
+    margin-bottom: 25px;
+    background: #fff;
+}
+.change_password_btn{
+    margin: 10px 15px 0 0;
+    background: skyblue;
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+    display: block;
+    border: none;
+    cursor: pointer;
+    padding: 9px 46px;
+    float: right;
+    transition: .4s ease-in-out;
+    -webkit-transition: .4s ease-in-out;
+    -moz-transition: .4s ease-in-out;
+    -ms-transition: .4s ease-in-out;
+    -o-transition: .4s ease-in-out;
+}
+.change_password_btn:hover{
+    background: deepskyblue;
+    transition: .4s ease-in-out;
+    -webkit-transition: .4s ease-in-out;
+    -moz-transition: .4s ease-in-out;
+    -ms-transition: .4s ease-in-out;
+    -o-transition: .4s ease-in-out;
+}
+.allb{
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 101;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.6);
+}
