@@ -54,7 +54,7 @@ class Post(models.Model):
     # 文章正文
     body = models.TextField(verbose_name='文章正文')
     # 创建时间
-    created_time = models.DateTimeField(auto_now_add=True, verbose_name='文章正文')
+    created_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     # 修改时间
     modified_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
     # 文章摘要
@@ -102,7 +102,7 @@ class Post(models.Model):
             # 先将 Markdown 文本渲染成 HTML 文本
             # strip_tags 去掉 HTML 文本的全部 HTML 标签
             # 从文本摘取前 54 个字符赋给 excerpt
-            self.excerpt = strip_tags(md.convert(self.body))[:54]
+            self.excerpt = strip_tags(md.convert(self.body))[:50]
             # self.excerpt = self.body[:50]
 
         # 将数据保存到数据库中

@@ -2,7 +2,7 @@
 {% load static %}
 <html>
 <head>
-    <title>Black &amp; White</title>
+    <title>微博客</title>
 
     <!-- meta -->
     <meta charset="UTF-8">
@@ -21,7 +21,7 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/pace.min.js' %}"></script>
     <script src="{% static 'js/modernizr.custom.js' %}"></script>
-    <script src="{% static 'js/script.js' %}"></script>
+<!--    <script src="{% static 'js/script.js' %}"></script>-->
     <script src="{% static 'js/ucenter.js' %}"></script>
 </head>
 
@@ -79,7 +79,7 @@
     <div class="container">
         <div class="row">
             <main class="col-md-8">
-                <article class="post post-1">
+                <article class="post">
                     <header class="entry-header">
                         <h1 class="entry-title">{{post.title}}</h1>
                         <div class="entry-meta">
@@ -97,7 +97,7 @@
                 <section class="comment-area" id="comment-area">
                     <hr>
                     <h3>发表评论</h3>
-                    <form action="javascript:" id="created_reviews" method="post" class="comment-form">
+                    <form action="javascript:" id="created_reviews" class="comment-form">
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="id_comment">评论：</label>
@@ -108,12 +108,12 @@
                         </div>    <!-- row -->
                     </form>
                     <div class="comment-list-panel">
-                        <h3>评论列表，共 <span>{{reviews_num}}</span> 条评论</h3>
+                        <h3>评论列表，共 <span>{{post.reviews}}</span> 条评论</h3>
                         <ul class="comment-list list-unstyled">
                             {% for review in reviews %}
                             <li class="comment-item">
                                 <span class="nickname">{{review.user}}</span>
-                                <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">{{review.created_time}}</time>
+                                <time class="submit-date">{{review.created_time}}</time>
                                 <div class="text">{{review.text}}</div>
                             </li>
                             {% endfor %}

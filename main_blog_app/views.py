@@ -1,4 +1,4 @@
-import json, markdown, re
+import json, markdown, datetime
 from django.shortcuts import render, HttpResponse
 from rest_framework.response import Response
 from rest_framework import generics
@@ -133,7 +133,9 @@ class LPost(generics.ListAPIView):
         account = request.COOKIES.get('account', '')
         if account:
             request.session['account'] = account
-        posts = SimPostSerializers(Post.objects.all(), many=True).data
+        posts = Post.objects.all()
+        for post in posts:
+            post.created_time = post.created_time.strftime('%Y-%m-%d')
         return render(request, 'index.html', {'posts': posts})
 
 
@@ -145,6 +147,7 @@ class RUDPost(generics.RetrieveUpdateDestroyAPIView):
     def get(self, request, *args, **kwargs):
         post_id = kwargs.get('id')
         post = Post.objects.get(id=post_id)
+        post.increase_views()
         reviews = Review.objects.filter(post=post)
         post.body = markdown.markdown(post.body,
                                   extensions=[
@@ -152,7 +155,7 @@ class RUDPost(generics.RetrieveUpdateDestroyAPIView):
                                      'markdown.extensions.codehilite',
                                      'markdown.extensions.toc',
                                   ])
-        return render(request, 'single.html', {'post': post, 'reviews': reviews, 'reviews_num': len(reviews)})
+        return render(request, 'single.html', {'post': post, 'reviews': reviews})
 
 
 class CReview(generics.CreateAPIView):
@@ -162,8 +165,10 @@ class CReview(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             post_id = kwargs.get('id')
-            review = Review.objects.create(text=request.POST.get('text'), post=Post.objects.get(id=post_id), user=User.objects.get(account=request.session['account']))
+            post = Post.objects.get(id=post_id)
+            review = Review.objects.create(text=request.POST.get('text'), post=post, user=User.objects.get(account=request.session['account']))
             review.save()
+            post.increase_reviews()
         except Exception as e:
             print(e)
             return Response(json.dumps({'status': 400, 'msg': '评论失败'}), status=400)

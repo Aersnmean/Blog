@@ -20,9 +20,8 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/pace.min.js' %}"></script>
     <script src="{% static 'js/modernizr.custom.js' %}"></script>
-    <script src="{% static 'js/script.js' %}"></script>
+<!--    <script src="{% static 'js/script.js' %}"></script>-->
     <script src="{% static 'js/ucenter.js' %}"></script>
-
 </head>
 
 <body>
@@ -89,8 +88,8 @@
 <!--                            <span class="post-category"><a href="#">Django 博客教程</a></span>-->
                             <span class="post-date"><a href="{% url 'blog:single' post.id %}"><time class="entry-date">{{post.created_time}}</time></a></span>
                             <span class="post-author"><a href="{% url 'blog:single' post.id %}">{{post.author}}</a></span>
-                            <span class="comments-link"><a href="{% url 'blog:single' post.id %}">{{post.views}} 评论</a></span>
-                            <span class="views-count"><a href="{% url 'blog:single' post.id %}">{{post.reviews}} 阅读</a></span>
+                            <span class="comments-link"><a href="{% url 'blog:single' post.id %}">{{post.reviews}} 评论</a></span>
+                            <span class="views-count"><a href="{% url 'blog:single' post.id %}">{{post.views}} 阅读</a></span>
                         </div>
                     </header>
                     <div class="entry-content clearfix">
