@@ -8,11 +8,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- css -->
+        <!-- css -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="{% static 'css/pace.css' %}">
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ucenter.css' %}">
 
     <!-- js -->
     <script src="{% static 'js/jquery-2.1.3.min.js' %}"></script>
@@ -20,7 +21,8 @@
     <script src="{% static 'js/pace.min.js' %}"></script>
     <script src="{% static 'js/modernizr.custom.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
-    </head>
+    <script src="{% static 'js/ucenter.js' %}"></script>
+</head>
 
 <body>
     <div class="container">
@@ -28,7 +30,7 @@
             <div class="row">
                 <div class="col-md-4 col-sm-5 col-xs-8">
                     <div class="logo">
-                        <h1><a href="index.html"><b>Black</b> &amp; White</a></h1>
+                        <h1><a href="index.html">微博客</a></h1>
                     </div>
                 </div><!-- col-md-4 -->
                 <div class="col-md-8 col-sm-7 col-xs-4">
@@ -41,18 +43,28 @@
 
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav navbar-right">
-                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'about.html' %}" data-hover="">yh</a></li>
-                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'index.html' %}" data-hover="首页">首页</a></li>
-                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'full-width.html' %}" data-hover="博客">博客</a></li>
-                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'contact.html' %}" data-hover="联系">联系</a></li>
+                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'login' %}" data-hover="">登录/注册</a></li>
+                                <li class="cl-effect-11">
+                                    <a id="user" href="#" data-hover="">{{request.session.account}}</a>
+                                    <div id="ucenter" class="ucenter">
+                                        <ul style="margin: 0;padding: 0">
+                                            <li class="ucenter_li"><a href="javascript:">修改密码</a></li>
+                                            <li class="ucenter_li"><a href="javascript:">退出登录</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
+                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'full-width' %}" data-hover="博客">博客</a></li>
+                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="联系">联系</a></li>
                             </ul>
+
                         </div><!-- /.navbar-collapse -->
                     </nav>
                     <div id="header-search-box">
                         <a id="search-menu" href="#"><span id="search-icon" class="ion-ios-search-strong"></span></a>
                         <div id="search-form" class="search-form">
                             <form role="search" method="get" id="searchform" action="#">
-                                <input type="search" placeholder="Search" required>
+                                <input type="search" placeholder="搜索" required>
                                 <button type="submit"><span class="ion-ios-search-strong"></span></button>
                             </form>
                         </div>

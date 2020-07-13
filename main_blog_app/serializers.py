@@ -1,20 +1,26 @@
-from rest_framework_mongoengine import serializers
+from rest_framework import serializers
 from .models import *
 
 
-class UserSerializers(serializers.DocumentSerializer):
+class UserSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
 
 
-class PostSerializers(serializers.DocumentSerializer):
+class SimPostSerializers(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ['id', 'title', 'created_time', 'excerpt', 'views', 'author', 'reviews']
 
 
-class ReviewSerializers(serializers.DocumentSerializer):
+class PostSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'created_time', 'modified_time', 'body', 'views', 'author', 'reviews']
+
+
+class ReviewSerializers(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'

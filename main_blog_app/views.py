@@ -1,4 +1,4 @@
-import json
+import json, markdown, re
 from django.shortcuts import render, HttpResponse
 from rest_framework.response import Response
 from rest_framework import generics
@@ -15,7 +15,7 @@ def index(request):
 
 # 页面渲染
 def render_page(request, page_name):
-    return render(request, '{}'.format(page_name))
+    return render(request, '{}.html'.format(page_name))
 
 
 # 用户注册
@@ -25,7 +25,6 @@ class Register(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         user = User.objects.create(account=request.POST.get('account'), username=request.POST.get('username'), password=request.POST.get('password'))
-        print(user)
         request.session['account'] = user.account
         return Response(json.dumps({'status': 200, 'msg': '注册成功'}), status=200)
 
@@ -117,7 +116,58 @@ def logout(request):
     return HttpResponse(json.dumps({'status': 200, 'msg': '退出登录成功'}), status=200)
 
 
-def getlog(request):
-    return HttpResponse(request.session['user'], status=200)
+# def getlog(request):
+#     return HttpResponse(request.session['user'], status=200)
+
+
+class CPost(generics.CreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+
+
+class LPost(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = SimPostSerializers
+
+    def get(self, request, *args, **kwargs):
+        account = request.COOKIES.get('account', '')
+        if account:
+            request.session['account'] = account
+        posts = SimPostSerializers(Post.objects.all(), many=True).data
+        return render(request, 'index.html', {'posts': posts})
+
+
+class RUDPost(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+    lookup_field = 'id'
+
+    def get(self, request, *args, **kwargs):
+        post_id = kwargs.get('id')
+        post = Post.objects.get(id=post_id)
+        reviews = Review.objects.filter(post=post)
+        post.body = markdown.markdown(post.body,
+                                  extensions=[
+                                     'markdown.extensions.extra',
+                                     'markdown.extensions.codehilite',
+                                     'markdown.extensions.toc',
+                                  ])
+        return render(request, 'single.html', {'post': post, 'reviews': reviews, 'reviews_num': len(reviews)})
+
+
+class CReview(generics.CreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializers
+
+    def post(self, request, *args, **kwargs):
+        try:
+            post_id = kwargs.get('id')
+            review = Review.objects.create(text=request.POST.get('text'), post=Post.objects.get(id=post_id), user=User.objects.get(account=request.session['account']))
+            review.save()
+        except Exception as e:
+            print(e)
+            return Response(json.dumps({'status': 400, 'msg': '评论失败'}), status=400)
+        else:
+            return Response(json.dumps({'status': 200, 'msg': '评论成功'}), status=200)
 
 

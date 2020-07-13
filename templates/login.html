@@ -20,7 +20,7 @@
 <body>
     <h1>登   录 / 注   册</h1>
     <div class="main-agileits">
-        {#登录表单#}
+<!--        登录表单-->
         <div class="left-form-w3-agile">
             <h2>登录</h2>
             <form id="login_form" action="#" method="post">
@@ -45,7 +45,7 @@
                 <input id="login_btn" type="submit" value="登   录">
             </form>
         </div>
-        {#注册表单#}
+<!--        注册表单-->
         <div class="right-map-w3-agile">
         <h2>注册</h2>
             <form id="register_form" action="#" method="post">
@@ -139,7 +139,7 @@
 					    res = JSON.parse(res);
 						console.log(res);
                         if (res.status == 200) {
-                            window.location.href = "{% url 'blog:page' 'index.html' %}";
+                            window.location.href = "{% url 'blog:index' %}";
                         }else {
                             $('#login_form .tips').eq(1).text(res.msg);
                             $('#login_form input[type="password"]').val('');
@@ -175,7 +175,6 @@
                 for(let i = 0; i < 3; i++){
 					datas[data[i].name] = data[i].value;
 				}
-                console.log(datas);
                 $.ajax({
 					url: 'http://127.0.0.1:8000/reg/',
 					type: 'post',
@@ -186,7 +185,7 @@
 						console.log(res);
                         if (res.status == 200) {
                             alert('注册成功');
-                            window.location.href = "{% url 'blog:page' 'index.html' %}";
+                            window.location.href = "{% url 'blog:index' %}";
                         }else {
                             alert('注册失败');
                         }
