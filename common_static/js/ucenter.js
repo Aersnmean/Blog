@@ -1,9 +1,4 @@
 $(function () {
-    if ($('.navbar-right li a').eq(1).text() == '') {
-        $('.navbar-right li').eq(1).hide();
-    }else {
-        $('.navbar-right li').eq(0).hide();
-    }
 
     if ($('#ucenter').css('display') == 'none') {
         $('#user, #ucenter').on('mouseenter', function () {

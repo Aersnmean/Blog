@@ -43,9 +43,12 @@
 
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
+                            {% if account == '' %}
                             <li class="cl-effect-11"><a href="{% url 'blog:page' 'login' %}" data-hover="">登录/注册</a></li>
+                            <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
+                            {% else %}
                             <li class="cl-effect-11">
-                                <a id="user" href="#" data-hover="">{{request.session.account}}</a>
+                                <a id="user" href="#" data-hover="">{{account}}</a>
                                 <div id="ucenter" class="ucenter">
                                     <ul style="margin: 0;padding: 0">
                                         <li class="ucenter_li"><a href="javascript:">修改密码</a></li>
@@ -54,11 +57,11 @@
                                 </div>
                             </li>
                             <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
-                            <li class="cl-effect-11"><a href="{% url 'blog:page' 'full-width' %}" data-hover="博客">博客</a></li>
-                            <li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="联系">联系</a></li>
+                            <li class="cl-effect-11"><a href="{% url 'blog:ul_post' account %}" data-hover="我的">我的</a></li>
+                            <li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="发博">发博</a></li>
+                            {% endif %}
                         </ul>
-
-                    </div><!-- /.navbar-collapse -->
+                    </div>
                 </nav>
                 <div id="header-search-box">
                     <a id="search-menu" href="#"><span id="search-icon" class="ion-ios-search-strong"></span></a>
@@ -128,85 +131,81 @@
                 <div class="widget widget-recent-posts">
                     <h3 class="widget-title">最新文章</h3>
                     <ul>
+                        {% for post in new_posts %}
                         <li>
-                            <a href="#">Django 博客开发入门教程：前言</a>
+                            <a href="{% url 'blog:single' post.id %}">{{ post.title }}</a>
                         </li>
-                        <li>
-                            <a href="#">Django 博客使用 Markdown 自动生成文章目录</a>
-                        </li>
-                        <li>
-                            <a href="#">部署 Django 博客</a>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
-                <div class="widget widget-archives">
-                    <h3 class="widget-title">归档</h3>
-                    <ul>
-                        <li>
-                            <a href="#">2017 年 5 月</a>
-                        </li>
-                        <li>
-                            <a href="#">2017 年 4 月</a>
-                        </li>
-                        <li>
-                            <a href="#">2017 年 3 月</a>
-                        </li>
-                    </ul>
-                </div>
+<!--                <div class="widget widget-archives">-->
+<!--                    <h3 class="widget-title">归档</h3>-->
+<!--                    <ul>-->
+<!--                        <li>-->
+<!--                            <a href="#">2017 年 5 月</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">2017 年 4 月</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">2017 年 3 月</a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
 
-                <div class="widget widget-category">
-                    <h3 class="widget-title">分类</h3>
-                    <ul>
-                        <li>
-                            <a href="#">Django 博客教程 <span class="post-count">(13)</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Python 教程 <span class="post-count">(11)</span></a>
-                        </li>
-                        <li>
-                            <a href="#">Django 用户认证 <span class="post-count">(8)</span></a>
-                        </li>
-                    </ul>
-                </div>
+<!--                <div class="widget widget-category">-->
+<!--                    <h3 class="widget-title">分类</h3>-->
+<!--                    <ul>-->
+<!--                        <li>-->
+<!--                            <a href="#">Django 博客教程 <span class="post-count">(13)</span></a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">Python 教程 <span class="post-count">(11)</span></a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">Django 用户认证 <span class="post-count">(8)</span></a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
 
-                <div class="widget widget-tag-cloud">
-                    <h3 class="widget-title">标签云</h3>
-                    <ul>
-                        <li>
-                            <a href="#">Django</a>
-                        </li>
-                        <li>
-                            <a href="#">Python</a>
-                        </li>
-                        <li>
-                            <a href="#">Java</a>
-                        </li>
-                        <li>
-                            <a href="#">笔记</a>
-                        </li>
-                        <li>
-                            <a href="#">文档</a>
-                        </li>
-                        <li>
-                            <a href="#">AngularJS</a>
-                        </li>
-                        <li>
-                            <a href="#">CSS</a>
-                        </li>
-                        <li>
-                            <a href="#">JavaScript</a>
-                        </li>
-                        <li>
-                            <a href="#">Snippet</a>
-                        </li>
-                        <li>
-                            <a href="#">jQuery</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="rss">
-                    <a href=""><span class="ion-social-rss-outline"></span> RSS 订阅</a>
-                </div>
+<!--                <div class="widget widget-tag-cloud">-->
+<!--                    <h3 class="widget-title">标签云</h3>-->
+<!--                    <ul>-->
+<!--                        <li>-->
+<!--                            <a href="#">Django</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">Python</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">Java</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">笔记</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">文档</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">AngularJS</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">CSS</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">JavaScript</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">Snippet</a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="#">jQuery</a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--                <div class="rss">-->
+<!--                    <a href=""><span class="ion-social-rss-outline"></span> RSS 订阅</a>-->
+<!--                </div>-->
             </aside>
         </div>
     </div>

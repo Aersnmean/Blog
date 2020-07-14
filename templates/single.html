@@ -44,9 +44,12 @@
 
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
+                            {% if account == '' %}
                             <li class="cl-effect-11"><a href="{% url 'blog:page' 'login' %}" data-hover="">登录/注册</a></li>
+                            <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
+                            {% else %}
                             <li class="cl-effect-11">
-                                <a id="user" href="#" data-hover="">{{request.session.account}}</a>
+                                <a id="user" href="#" data-hover="">{{account}}</a>
                                 <div id="ucenter" class="ucenter">
                                     <ul style="margin: 0;padding: 0">
                                         <li class="ucenter_li"><a href="javascript:">修改密码</a></li>
@@ -55,11 +58,11 @@
                                 </div>
                             </li>
                             <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
-                            <li class="cl-effect-11"><a href="{% url 'blog:page' 'full-width' %}" data-hover="博客">博客</a></li>
-                            <li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="联系">联系</a></li>
+                            <li class="cl-effect-11"><a href="{% url 'blog:ul_post' account %}" data-hover="我的">我的</a></li>
+                            <li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="发博">发博</a></li>
+                            {% endif %}
                         </ul>
-
-                    </div><!-- /.navbar-collapse -->
+                    </div>
                 </nav>
                 <div id="header-search-box">
                     <a id="search-menu" href="#"><span id="search-icon" class="ion-ios-search-strong"></span></a>
@@ -83,7 +86,6 @@
                     <header class="entry-header">
                         <h1 class="entry-title">{{post.title}}</h1>
                         <div class="entry-meta">
-<!--                            <span class="post-category"><a href="#">Django 博客教程</a></span>-->
                             <span class="post-date"><a href="#"><time class="entry-date">{{post.created_time}}</time></a></span>
                             <span class="post-author"><a href="#">{{post.author}}</a></span>
                             <span class="comments-link"><a href="#">{{post.reviews}} 评论</a></span>
@@ -97,7 +99,12 @@
                 <section class="comment-area" id="comment-area">
                     <hr>
                     <h3>发表评论</h3>
-                    <form action="javascript:" id="created_reviews" class="comment-form">
+                    <div id="is_login" style="display: none">
+                        请先
+                        <a id="login_btn" style="padding: 2px 5px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;color: white; border: 1px solid skyblue; background-color: skyblue" href="{% url 'blog:page' 'login' %}">登录/注册</a>
+                        后发表评论 (・ω・)
+                    </div>
+                    <form action="javascript:" id="created_reviews" class="comment-form" style="display: none">
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="id_comment">评论：</label>
@@ -145,15 +152,11 @@
                 <div class="widget widget-recent-posts">
                     <h3 class="widget-title">最新文章</h3>
                     <ul>
+                        {% for post in new_posts %}
                         <li>
-                            <a href="#">Django 博客开发入门教程：前言</a>
+                            <a href="{% url 'blog:single' post.id %}">{{ post.title }}</a>
                         </li>
-                        <li>
-                            <a href="#">Django 博客使用 Markdown 自动生成文章目录</a>
-                        </li>
-                        <li>
-                            <a href="#">部署 Django 博客</a>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
 <!--                <div class="widget widget-archives">-->
@@ -243,10 +246,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <p class="copyright">&copy 2017 - Collect from <a href="http://www.cssmoban.com/"
-                                                                  target="_blank" title="模板之家">模板之家</a>
-                    - Modified by <a href="http://zmrenwu.com/" title="网页模板" target="_blank">追梦人物的博客</a>
-                </p>
+                <p class="copyright"><a href="http://www.cssmoban.com/" target="_blank" title=""></a></p>
             </div>
         </div>
     </div>
@@ -268,25 +268,32 @@
 </body>
 
 <script>
-    $('#created_reviews_btn').on('click', function (e) {
-        // e.preventDefault();
-        let text = $('#id_comment').val();
-        if (text != '') {
-            console.log({'text': text});
-            $.ajax({
-                url: 'http://127.0.0.1:8000/cl_review/'+$('#post_id').val()+'/',
-                type: 'post',
-                data: {'text': text},
-                dataType: 'json',
-                success:function (res) {
-                    res = JSON.parse(res);
-                    console.log(res);
-                    if (res.status == 200) {
-                        window.location.reload();
+    $(function () {
+        $('#created_reviews_btn').on('click', function (e) {
+            // e.preventDefault();
+            let text = $('#id_comment').val();
+            if (text != '') {
+                console.log({'text': text});
+                $.ajax({
+                    url: '/c_review/' + $('#post_id').val() + '/',
+                    type: 'post',
+                    data: {'text': text},
+                    dataType: 'json',
+                    success: function (res) {
+                        res = JSON.parse(res);
+                        console.log(res);
+                        if (res.status == 200) {
+                            window.location.reload();
+                        }
                     }
-                }
-            });
+                });
+            }
+        });
+        if ($('.navbar-right li a').eq(1).text() == '') {
+            $('#is_login').show();
+        }else {
+            $('#created_reviews').show();
         }
-    });
+    })
 </script>
 </html>

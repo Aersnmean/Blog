@@ -1,21 +1,44 @@
 import json, markdown, datetime
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import *
 from rest_framework.response import Response
 from rest_framework import generics
 from .serializers import *
+from django.utils.decorators import method_decorator
 
 
-# 首页渲染
-def index(request):
-    account = request.COOKIES.get('account', '')
-    if account:
-        request.session['account'] = account
-    return render(request, 'index.html')
+# # 判断是否登录
+# def is_login(func):
+#     def inner(request, *args, **kwargs):
+#         user_account = request.session.get('account', False)
+#         if user_account:
+#             return func(request, *args, **kwargs)
+#         else:
+#             print(user_account)
+#             return redirect(reverse('blog:page', args=['login']))
+#     return inner
+
+
+# 获取cookie用户信息
+def is_jizhu(func):
+    def inner(request, *args, **kwargs):
+        account = request.COOKIES.get('account', '')
+        if account:
+            request.session['account'] = account
+        return func(request, *args, **kwargs)
+    return inner
+
+
+# # 首页渲染
+# def index(request):
+#     account = request.COOKIES.get('account', '')
+#     if account:
+#         request.session['account'] = account
+#     return render(request, 'index.html')
 
 
 # 页面渲染
 def render_page(request, page_name):
-    return render(request, '{}.html'.format(page_name))
+    return render(request, '{}.html'.format(page_name), {'account': request.session.get('account', '')})
 
 
 # 用户注册
@@ -82,61 +105,55 @@ class Login(generics.RetrieveUpdateAPIView):
                 return Response(json.dumps({'status': 405, 'msg': '原密码错误'}))
 
 
-# class OneUser(generics.RetrieveUpdateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializers
-#     lookup_field = 'name'
-#
-#     def get(self, request, *args, **kwargs):
-#         try:
-#             user = User.objects.get(username=kwargs.get('name'))
-#         except:
-#             return Response(json.dumps({'status': 405, 'msg': '用户名信息不存在'}))
-#         else:
-#             tel = user.tel[:3]+'****'+user.tel[7:]
-#             password = '*'*len(user.password)
-#             return Response(json.dumps({'status': 405, 'msg': '用户名信息不存在', 'tel': tel, 'password': password}))
-#
-#     def put(self, request, *args, **kwargs):
-#         try:
-#             user = User.objects.get(username=kwargs.get('name'))
-#         except:
-#             return Response(json.dumps({'status': 405, 'msg': '用户名信息不存在'}))
-#         else:
-#             if request.POST.get('old_password') == user.password:
-#                 user.password = request.POST.get('new_password')
-#                 user.save()
-#                 return Response(json.dumps({'status': 200, 'msg': '修改成功'}))
-#             else:
-#                 return Response(json.dumps({'status': 400, 'msg': '原密码错误'}))
-
-
 def logout(request):
     request.session.flush()
     return HttpResponse(json.dumps({'status': 200, 'msg': '退出登录成功'}), status=200)
 
 
-# def getlog(request):
-#     return HttpResponse(request.session['user'], status=200)
-
-
+# 创建Post
 class CPost(generics.CreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializers
 
+    def post(self, request, *args, **kwargs):
+        try:
+            title = request.POST.get('title')
+            body = request.POST.get('title')
+            excerpt = request.POST.get('excerpt', '')
+            author = User.objects.get(account=request.POST.get('account'))
+            Post.objects.create(title=title, body=body, excerpt=excerpt, author=author)
+        except:
+            return Response(json.dumps({'status': 502, 'msg': '发布失败'}))
+        else:
+            return Response(json.dumps({'status': 200, 'msg': '发布成功'}))
 
+
+# 获取所有Post
+@method_decorator(is_jizhu, name='dispatch')
 class LPost(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = SimPostSerializers
 
     def get(self, request, *args, **kwargs):
-        account = request.COOKIES.get('account', '')
-        if account:
-            request.session['account'] = account
         posts = Post.objects.all()
         for post in posts:
             post.created_time = post.created_time.strftime('%Y-%m-%d')
-        return render(request, 'index.html', {'posts': posts})
+        return render(request, 'index.html', {'posts': posts, 'new_posts': posts[:3], 'account': request.session.get('account', '')})
+
+
+# 获取某用户的Post
+@method_decorator(is_jizhu, name='dispatch')
+class ULPost(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = SimPostSerializers
+
+    def get(self, request, *args, **kwargs):
+        account = kwargs.get('account')
+        user = User.objects.get(account=account)
+        posts = Post.objects.filter(author=user)
+        for post in posts:
+            post.created_time = post.created_time.strftime('%Y-%m-%d')
+        return render(request, 'full-width.html', {'posts': posts, 'account': request.session.get('account', '')})
 
 
 class RUDPost(generics.RetrieveUpdateDestroyAPIView):
@@ -155,9 +172,11 @@ class RUDPost(generics.RetrieveUpdateDestroyAPIView):
                                      'markdown.extensions.codehilite',
                                      'markdown.extensions.toc',
                                   ])
-        return render(request, 'single.html', {'post': post, 'reviews': reviews})
+        new_posts = Post.objects.all()[:3]
+        return render(request, 'single.html', {'post': post, 'new_posts': new_posts, 'reviews': reviews, 'account': request.session.get('account', '')})
 
 
+# 创建评论
 class CReview(generics.CreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializers
@@ -174,5 +193,3 @@ class CReview(generics.CreateAPIView):
             return Response(json.dumps({'status': 400, 'msg': '评论失败'}), status=400)
         else:
             return Response(json.dumps({'status': 200, 'msg': '评论成功'}), status=200)
-
-

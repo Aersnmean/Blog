@@ -20,7 +20,7 @@
 	<script src="{% static 'js/bootstrap.min.js' %}"></script>
 	<script src="{% static 'js/pace.min.js' %}"></script>
 	<script src="{% static 'js/modernizr.custom.js' %}"></script>
-	<script src="{% static 'js/script.js' %}"></script>
+<!--	<script src="{% static 'js/script.js' %}"></script>-->
 	<script src="{% static 'js/ucenter.js' %}"></script>
 </head>
 
@@ -43,9 +43,12 @@
 
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav navbar-right">
+								{% if account == '' %}
 								<li class="cl-effect-11"><a href="{% url 'blog:page' 'login' %}" data-hover="">登录/注册</a></li>
+								<li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
+								{% else %}
 								<li class="cl-effect-11">
-									<a id="user" href="#" data-hover="">{{request.session.account}}</a>
+									<a id="user" href="#" data-hover="">{{account}}</a>
 									<div id="ucenter" class="ucenter">
 										<ul style="margin: 0;padding: 0">
 											<li class="ucenter_li"><a href="javascript:">修改密码</a></li>
@@ -54,11 +57,11 @@
 									</div>
 								</li>
 								<li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
-								<li class="cl-effect-11"><a href="{% url 'blog:page' 'full-width' %}" data-hover="博客">博客</a></li>
-								<li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="联系">联系</a></li>
+								<li class="cl-effect-11"><a href="{% url 'blog:ul_post' account %}" data-hover="我的">我的</a></li>
+								<li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="发博">发博</a></li>
+								{% endif %}
 							</ul>
-
-						</div><!-- /.navbar-collapse -->
+						</div>
 					</nav>
 					<div id="header-search-box">
 						<a id="search-menu" href="#"><span id="search-icon" class="ion-ios-search-strong"></span></a>

@@ -20,7 +20,7 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/pace.min.js' %}"></script>
     <script src="{% static 'js/modernizr.custom.js' %}"></script>
-    <script src="{% static 'js/script.js' %}"></script>
+<!--    <script src="{% static 'js/script.js' %}"></script>-->
     <script src="{% static 'js/ucenter.js' %}"></script>
 </head>
 
@@ -43,9 +43,12 @@
 
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav navbar-right">
+                                {% if account == '' %}
                                 <li class="cl-effect-11"><a href="{% url 'blog:page' 'login' %}" data-hover="">登录/注册</a></li>
+                                <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
+                                {% else %}
                                 <li class="cl-effect-11">
-                                    <a id="user" href="#" data-hover="">{{request.session.account}}</a>
+                                    <a id="user" href="#" data-hover="">{{account}}</a>
                                     <div id="ucenter" class="ucenter">
                                         <ul style="margin: 0;padding: 0">
                                             <li class="ucenter_li"><a href="javascript:">修改密码</a></li>
@@ -54,11 +57,11 @@
                                     </div>
                                 </li>
                                 <li class="cl-effect-11"><a href="{% url 'blog:index' %}" data-hover="首页">首页</a></li>
-                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'full-width' %}" data-hover="博客">博客</a></li>
-                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="联系">联系</a></li>
+                                <li class="cl-effect-11"><a href="{% url 'blog:ul_post' account %}" data-hover="我的">我的</a></li>
+                                <li class="cl-effect-11"><a href="{% url 'blog:page' 'contact' %}" data-hover="发博">发博</a></li>
+                                {% endif %}
                             </ul>
-
-                        </div><!-- /.navbar-collapse -->
+                        </div>
                     </nav>
                     <div id="header-search-box">
                         <a id="search-menu" href="#"><span id="search-icon" class="ion-ios-search-strong"></span></a>
@@ -81,14 +84,13 @@
                     <h1 class="page-title">Contact</h1>
                     <article class="post">
                         <div class="entry-content clearfix">
-                            <form action="#" method="post" class="contact-form">
+                            <form action="javascript:" id="pub_post" class="contact-form">
                                 <div class="row">
-                                    <div class="col-md-6 col-md-offset-3">
-                                        <input type="text" name="name" placeholder="Name" required>
-                                        <input type="email" name="email" placeholder="Email" required>
-                                        <input type="text" name="subject" placeholder="Subject" required>
-                                        <textarea name="message" rows="7" placeholder="Your Message" required></textarea>
-                                        <button class="btn-send btn-5 btn-5b ion-ios-paperplane"><span>Drop Me a Line</span></button>
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <input type="text" name="title" placeholder="标题" required>
+                                        <textarea name="excerpt" rows="5" placeholder="摘要 （ 非必填 ）" style="resize: none"></textarea>
+                                        <textarea name="body" rows="20" placeholder="内容 ( Use Markdown )" required></textarea>
+                                        <button id="pub_post_btn" type="submit" class="btn-send btn-5 btn-5b ion-ios-paperplane"><span>发  送</span></button>
                                     </div>
                                 </div>	<!-- row -->
                             </form>
@@ -102,7 +104,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <p class="copyright">&copy; 2014 ThemeWagon.com</p>
+                    <p class="copyright"></p>
                 </div>
             </div>
         </div>
@@ -122,4 +124,37 @@
     </div>
 
 </body>
+<script>
+    $('textarea').on('input', function(){
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight+5 + "px";
+    });
+    $('#pub_post_btn').on('click', function () {
+        let data = $('#pub_post').serializeArray();
+        let datas = {};
+        for(let i = 0; i < 3; i++){
+            datas[data[i].name] = data[i].value;
+        }
+        console.log(datas);
+        if (datas['title'] && datas['body']) {
+            datas['account'] = $('#user').text();
+            $.ajax({
+                url: '/c_post/',
+                type: 'post',
+                data: datas,
+                dataType: 'json',
+                success:function (res) {
+                    res = JSON.parse(res);
+                    console.log(res);
+                    if (res.status == 200) {
+                        alert('发送成功');
+                        window.location.reload();
+                    }else {
+                        alert('发送失败');
+                    }
+                }
+            });
+        }
+    })
+</script>
 </html>

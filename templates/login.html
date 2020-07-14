@@ -5,11 +5,12 @@
     <title>微博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-{#    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>#}
+<!--    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>-->
     <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css" media="all" />
     <link href='//fonts.googleapis.com/css?family=Text+Me+One' rel='stylesheet' type='text/css'>
     <link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
     <script src="{% static 'js/jquery-2.1.3.min.js' %}"></script>
+    <script src="{% static 'js/login_register.js' %}"></script>
     <style>
         .tips{
             margin-top: -15px;
@@ -79,120 +80,4 @@
         <div class="clear"></div>
     </div>
 </body>
-<script>
-    $(function () {
-        var phonList = /^1[3456789]\d{9}$/;
-        //手机号格式校验
-        $('input[type="tel"]').blur(function(){
-            if($(this).val().length==0){
-                $(this).next('.tips').text("手机号不能为空");
-            }else if(!phonList.test($(this).val())){
-                $(this).next('.tips').text("手机号格式不正确");
-            }else{
-                $(this).next('.tips').text("");
-            }
-        });
-        //密码格式校验
-        $('input[type="password"]').blur(function(){
-            if($(this).val().length==0){
-                $(this).next('.tips').text("密码不能为空");
-		    }else if($(this).val().length>0 && $(this).val().length<6){
-                $(this).next('.tips').text("长度只能在6-20个字符之间");
-            }else{
-                $(this).next('.tips').text("");
-            }
-        });
-        //昵称格式校验
-        $('#register_form input').eq(1).blur(function(){
-            if($(this).val().length==0){
-                $(this).next('.tips').text("昵称不能为空");
-		    }else if($(this).val().length<2 || $(this).val().length>20){
-                $(this).next('.tips').text("长度只能在2-20个字符之间");
-            }else{
-                $(this).next('.tips').text("");
-            }
-        });
-        //确认密码校验
-        $('#register_form input').eq(3).blur(function(){
-            if($(this).val() != $('#register_form input').eq(2).val()){
-                $(this).next('.tips').text("两次密码不一致");
-		    }else{
-                $(this).next('.tips').text("");
-            }
-        });
-        //登录按钮提交
-        $('#login_btn').on('click', function (e) {
-            e.preventDefault();
-            if ($('#login_form .tips').text() == '') {
-                let data = $('#login_form').serializeArray();
-                let datas = {};
-                for(let i = 0; i < data.length; i++){
-					datas[data[i].name] = data[i].value;
-				}
-                console.log(datas);
-                $.ajax({
-					url: 'http://127.0.0.1:8000/log/',
-					type: 'get',
-					data: datas,
-					dataType: 'json',
-					success:function (res) {
-					    res = JSON.parse(res);
-						console.log(res);
-                        if (res.status == 200) {
-                            window.location.href = "{% url 'blog:index' %}";
-                        }else {
-                            $('#login_form .tips').eq(1).text(res.msg);
-                            $('#login_form input[type="password"]').val('');
-                        }
-                    }
-				});
-            }
-        });
-        // 注册校验手机号是否已注册
-        $('#register_form input[type="tel"]').blur(function(){
-            if ($(this).next('.tips').text() == '') {
-                $.ajax({
-                    url: 'http://127.0.0.1:8000/validate_tel/',
-                    type: 'get',
-                    data: {'account': $(this).val()},
-                    dataType: 'json',
-                    success:function (res) {
-                        res = JSON.parse(res);
-                        console.log(res);
-                        if (res.status == 405) {
-                            $('#register_form input[type="tel"]').next('.tips').text(res.msg);
-                        }
-                    }
-                });
-            }
-        });
-        // 注册按钮提交
-        $('#register_btn').on('click', function (e) {
-            e.preventDefault();
-            if ($('#register_form .tips').text() == '') {
-                let data = $('#register_form').serializeArray();
-                let datas = {};
-                for(let i = 0; i < 3; i++){
-					datas[data[i].name] = data[i].value;
-				}
-                $.ajax({
-					url: 'http://127.0.0.1:8000/reg/',
-					type: 'post',
-					data: datas,
-					dataType: 'json',
-					success:function (res) {
-					    res = JSON.parse(res);
-						console.log(res);
-                        if (res.status == 200) {
-                            alert('注册成功');
-                            window.location.href = "{% url 'blog:index' %}";
-                        }else {
-                            alert('注册失败');
-                        }
-                    }
-				});
-            }
-        });
-    });
-</script>
 </html>
