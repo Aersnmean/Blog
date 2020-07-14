@@ -118,7 +118,7 @@ class CPost(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             title = request.POST.get('title')
-            body = request.POST.get('title')
+            body = request.POST.get('body')
             excerpt = request.POST.get('excerpt', '')
             author = User.objects.get(account=request.POST.get('account'))
             Post.objects.create(title=title, body=body, excerpt=excerpt, author=author)
