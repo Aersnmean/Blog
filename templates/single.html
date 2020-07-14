@@ -99,12 +99,14 @@
                 <section class="comment-area" id="comment-area">
                     <hr>
                     <h3>发表评论</h3>
-                    <div id="is_login" style="display: none">
+                    {% if account == '' %}
+                    <div id="is_login">
                         请先
                         <a id="login_btn" style="padding: 2px 5px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;color: white; border: 1px solid skyblue; background-color: skyblue" href="{% url 'blog:page' 'login' %}">登录/注册</a>
                         后发表评论 (・ω・)
                     </div>
-                    <form action="javascript:" id="created_reviews" class="comment-form" style="display: none">
+                    {% else %}
+                    <form action="javascript:" id="created_reviews" class="comment-form">
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="id_comment">评论：</label>
@@ -114,6 +116,7 @@
                             </div>
                         </div>    <!-- row -->
                     </form>
+                    {% endif %}
                     <div class="comment-list-panel">
                         <h3>评论列表，共 <span>{{post.reviews}}</span> 条评论</h3>
                         <ul class="comment-list list-unstyled">
@@ -289,11 +292,6 @@
                 });
             }
         });
-        if ($('.navbar-right li a').eq(1).text() == '') {
-            $('#is_login').show();
-        }else {
-            $('#created_reviews').show();
-        }
     })
 </script>
 </html>
