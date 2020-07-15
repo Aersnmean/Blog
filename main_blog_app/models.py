@@ -1,6 +1,5 @@
 import markdown, re
 from django.db import models
-# from .views import strip_tags
 
 
 def strip_tags(string, allowed_tags=''):
