@@ -156,6 +156,7 @@ class ULPost(generics.ListAPIView):
         return render(request, 'full-width.html', {'posts': posts, 'account': request.session.get('account', '')})
 
 
+# 获取、修改、删除Post
 class RUDPost(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializers
@@ -173,7 +174,42 @@ class RUDPost(generics.RetrieveUpdateDestroyAPIView):
                                      'markdown.extensions.toc',
                                   ])
         new_posts = Post.objects.all()[:3]
-        return render(request, 'single.html', {'post': post, 'new_posts': new_posts, 'reviews': reviews, 'account': request.session.get('account', '')})
+        return render(request, 'single.html', {'post': post, 'new_posts': new_posts, 'reviews': reviews,\
+                                               'account': request.session.get('account', '')})
+
+    def put(self, request, *args, **kwargs):
+        post = Post.objects.get(id=kwargs.get('id'))
+        account = request.session.get('account', '')
+        if post.author.account == account:
+            post.title = request.POST.get('title')
+            post.body = request.POST.get('body')
+            post.excerpt = request.POST.get('excerpt')
+            post.save()
+            return HttpResponse(json.dumps({'status': 200, 'msg': '修改成功'}), status=200)
+        else:
+            return HttpResponse(json.dumps({'status': 405, 'msg': '修改失败'}), status=405)
+
+    def delete(self, request, *args, **kwargs):
+        post = Post.objects.get(id=kwargs.get('id'))
+        account = request.session.get('account', '')
+        if post.author.account == account:
+            post.delete()
+            return HttpResponse(json.dumps({'status': 200, 'msg': '删除成功'}), status=200)
+        else:
+            return HttpResponse(json.dumps({'status': 405, 'msg': '删除失败'}), status=405)
+
+
+class EditPage(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializers
+    lookup_field = 'id'
+
+    def get(self, request, *args, **kwargs):
+        post = Post.objects.get(id=kwargs.get('id'))
+        if post.author.account == request.session.get('account', ''):
+            return render(request, 'editpost.html', {'post': post, 'account': request.session.get('account', '')})
+        else:
+            return HttpResponse(status=405)
 
 
 # 创建评论
