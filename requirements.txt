@@ -19,7 +19,7 @@ Django==2.2.2
 django-filter==2.2.0
 django-heroku==0.3.1
 django-rest-framework-mongoengine==3.3.1
-djangorestframework==3.8.2
+djangorestframework==3.11.2
 etree-trunc==0.2
 gunicorn==20.0.4
 hyperlink==19.0.0
